@@ -1,0 +1,152 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
+    <h:head>
+          <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"></link>
+        
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" crossorigin="anonymous"></link>
+        <link rel="shortcut icon" href="#"></link>
+        <title>Lets do some taxes!</title>
+    </h:head>
+    <h:body>
+           <div class="container">        
+        <div> 
+            <div class="row">
+                <div style="margin-top: 20px; margin-bottom: 30px;" class="col-sm">
+                   <h1 style="color:#0074f2;" >Tax Calculator</h1>
+                </div>
+            </div>
+            
+            <h:form id="calculatorForm">                                                                                                             
+                <h:panelGroup id="calculatorPanel" layout="block">
+                    <div class="container"> 
+                      
+                        <div class="form-row">
+                            <div class="form-group col-sm-4"  >
+                                <label class="control-label">What is your Age?</label>
+                                <div class="input-group">
+                                    <h:inputText a:placeholder="Enter your age"  value="#{taxCalculation.age}"   class="form-control" id="age" />
+                                        
+                                </div>
+                            </div>
+                       </div>
+                        <div class="form-row">
+                            <div class="form-group col-sm-4"  >
+                                <label class="control-label">What is your total salary before deductions?</label>
+                                <div class="input-group">
+                                    <h:inputText a:placeholder="Total Taxable Income"   value="#{taxCalculation.income}" 
+                                                 class="form-control" id="income"/>
+                                </div>
+                            </div>
+                        </div>
+                          <div class="form-row">
+                            <div class="form-group  col-sm-4"  >
+                                <label class="control-label">Which tax year would you like to calculate?</label>
+                                <div class="input-group">
+                                    <h:selectOneMenu id="taxYear" value="#{taxCalculation.taxYear}" class="form-control ">
+                                        <f:selectItems value="#{taxCalculation.taxYearOptions.entrySet()}" var="taxYear" 
+                                                       itemValue="#{taxYear.key}" itemLabel="#{taxYear.value}" />
+                                    </h:selectOneMenu> 
+                                </div>                    
+                            </div>
+                             </div>
+                        <div class="form-row">
+                            <div class="form-group col-sm-4"  >
+                                <label class="control-label">How often do you receive this salary?</label>
+                                <div class="input-group">
+                                    <h:selectOneMenu id="salaryMonthlyOrAnnually" value="#{taxCalculation.salaryMonthlyOrAnnually}" class="form-control">
+                                        <f:selectItems value="#{taxCalculation.monthlyOrAnnuallyOptions.entrySet()}" var="monthOrAnnual" 
+                                                       itemValue="#{monthOrAnnual.key}" itemLabel="#{monthOrAnnual.value}" />
+                                    </h:selectOneMenu> 
+                                </div>                    
+                            </div>
+                       </div>
+                     
+                        <div class="form-row">
+                            <div class="form-group col-sm-4"  >
+                                <label class="control-label">Do you have any Medical Aid contributions? </label>
+                                <div class="input-group">
+                                    <div class="form-check-inline">
+<!--                                           <h:selectOneRadio id="" 
+                                                onclick="showHideMedicalAid();" > 
+                                                    <f:selectItem itemValue = "true" itemLabel = "Yes" /> 
+                                                    <f:selectItem itemValue = "false" itemLabel = "No" />
+                                            </h:selectOneRadio> -->
+                                        <h:selectBooleanCheckbox id="medicalContribution"  styleClass="hasContribution" value="#{taxCalculation.hasContribution}"
+                                                onclick="showHideMedicalAid();"> 
+                                            </h:selectBooleanCheckbox> Yes
+                                    </div>
+                                </div>
+                            </div>
+                              </div>
+                        <div class="form-row">
+                            <div class="form-group col-sm-4 showMeHideMe"  style="display: none;" >
+                                <label class="control-label">How many Dependants do you have?</label>
+                                <div class="input-group">
+                                    <h:inputText a:placeholder="Number of Dependents" value="#{taxCalculation.noOfDependants}"  
+                                                 class="form-control" styleClass="form-control noOfDependents" id="noOfDependants"/>
+                                </div>
+                            </div>
+                      </div>
+                        <div class="form-row">
+                          <div>
+                                <h:commandButton type="button" value="Calculate" styleClass="btn btn-primary"
+                                                 action="#{taxCalculation.performCalculation()}"  >
+                                    <f:ajax execute="taxYear age income salaryMonthlyOrAnnually medicalContribution noOfDependants" 
+                                            render=" output-text"/>
+                                </h:commandButton>    
+                            </div>    
+                        </div>
+                        
+                    </div>
+                </h:panelGroup> 
+                <h:panelGroup id="output-text" layout="block">
+                    <div class="form-group  col-sm-4"  >
+                        <h:messages id="results-messages" style="color: red;" showDetail="true" styleClass="messages rounded p-2 my-4"/>
+                    </div>
+                    <div class="container pt-3 pb-3"> 
+                        <div class="row">
+                            <hr/>
+                            <h:outputText escape="false" value="#{taxCalculation.calculatedResponse}" />
+                        </div>
+                    </div>
+                </h:panelGroup>
+            </h:form>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"  crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"  crossorigin="anonymous"></script>       
+    <script type="text/javascript">        
+
+            function showHideMedicalAid() { 
+            if($('.hasContribution:checked').length > 0) {
+                    $( ".showMeHideMe" ).css( "display", "block" );  
+                } else{ 
+                    $( ".showMeHideMe" ).css( "display", "none" );  
+                    $('.showMeHideMe').val(0);
+                }
+            }
+            
+            //        function showHideMedicalAid() { 
+//            alert("clicked");
+//            if($('.hasContribution').checked) {
+//                 alert("value");
+//             }
+//            if($('.hasContribution.checked').length > 0) {
+//                alert("clicked");
+//                    $( ".showMeHideMe" ).css( "display", "block" );  
+//                } else{ 
+//                    $( ".showMeHideMe" ).css( "display", "none" );  
+//                    $('.noOfDependents').val(0);
+//                }
+//            }
+            
+    </script>
+    </h:body>
+</html>
+
